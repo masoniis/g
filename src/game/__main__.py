@@ -17,10 +17,17 @@ from OpenGL.GL import (
     glVertexPointer,
 )
 
+from gutils import eprint
+
 
 def main():
-    # Initialize the library
+    def error_callback(error_code, description):
+        eprint(f"GLFW Error {error_code}: {description}")
+
+    glfw.set_error_callback(error_callback)
+
     if not glfw.init():
+        eprint("GLFW failed to initialize!")
         return
 
     # Create a windowed mode window and its OpenGL context
