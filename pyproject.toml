@@ -1,7 +1,7 @@
 [project]
-name = "gcraft"
+name = "g"
 version = "0.1.0"
-description = "Add your description here"
+description = "g stuff"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -11,5 +11,16 @@ dependencies = [
   "rich>=14.1.0",
 ]
 
+[tool.basedpyright]
+reportExplicitAny = false
+reportAny = false
+reportImplicitStringConcatenation = false
+reportUnknownMemberType = false
+reportUnknownArgumentType = false
+reportUnknownVariableType = false
+reportUnusedCallResult = false
+reportMissingTypeArgument = false
+
 [tool.setuptools.packages.find]
 where = ["src"]
+include = ["gutils*", "game*"]
