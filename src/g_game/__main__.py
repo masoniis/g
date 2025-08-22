@@ -1,3 +1,5 @@
+from typing import Any
+
 import glfw
 import numpy as np
 from OpenGL.GL import (
@@ -17,17 +19,19 @@ from OpenGL.GL import (
     glVertexPointer,
 )
 
-from g_utils import eprint
+from g_utils import glog
 
 
 def main():
-    def error_callback(error_code, description):
-        eprint(f"GLFW Error {error_code}: {description}")
+    glog.i("Main entrypoint!")
+
+    def error_callback(error_code: Any, description: Any):
+        glog.e(f"GLFW Error {error_code}: {description}")
 
     glfw.set_error_callback(error_callback)
 
     if not glfw.init():
-        eprint("GLFW failed to initialize!")
+        glog.e("GLFW failed to initialize!")
         return
 
     # Create a windowed mode window and its OpenGL context

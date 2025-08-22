@@ -20,6 +20,7 @@ reportUnknownArgumentType = false
 reportUnknownVariableType = false
 reportUnusedCallResult = false
 reportMissingTypeArgument = false
+reportMissingTypeStubs = false
 
 [tool.setuptools.packages.find]
 where = ["src"]

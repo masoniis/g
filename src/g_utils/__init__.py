@@ -1,3 +1,3 @@
-from .utils import eprint
+from .utils import glog
 
-__all__ = ["eprint"]
+__all__ = ["glog"]
