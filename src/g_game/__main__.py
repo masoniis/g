@@ -17,7 +17,7 @@ from OpenGL.GL import (
     glVertexPointer,
 )
 
-from gutils import eprint
+from g_utils import eprint
 
 
 def main():

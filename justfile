@@ -12,4 +12,4 @@ sync:
 
 # just run
 run *args:
-    uv run src/game {{args}}
+    uv run src/g_game {{args}}

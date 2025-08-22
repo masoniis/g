@@ -23,4 +23,4 @@ reportMissingTypeArgument = false
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["gutils*", "game*"]
+include = ["g_utils*", "g_game*"]
