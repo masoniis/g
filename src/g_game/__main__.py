@@ -1,5 +1,3 @@
-from typing import Any
-
 import glfw
 import numpy as np
 from OpenGL.GL import (
@@ -19,29 +17,14 @@ from OpenGL.GL import (
     glVertexPointer,
 )
 
+from g_game.window import GWin
 from g_utils import glog
 
 
 def main():
     glog.i("Main entrypoint!")
 
-    def error_callback(error_code: Any, description: Any):
-        glog.e(f"GLFW Error {error_code}: {description}")
-
-    glfw.set_error_callback(error_callback)
-
-    if not glfw.init():
-        glog.e("GLFW failed to initialize!")
-        return
-
-    # Create a windowed mode window and its OpenGL context
-    window = glfw.create_window(640, 480, "Hello World", None, None)
-    if not window:
-        glfw.terminate()
-        return
-
-    # Make the window's context current
-    glfw.make_context_current(window)
+    gwin = GWin().set_as_context()
 
     # Triangle vertices
     vertices = np.array(
@@ -66,14 +49,12 @@ def main():
     glLoadIdentity()
 
     # Loop until the user closes the window
-    while not glfw.window_should_close(window):
-        # Render here, e.g. using pyopengl
+    while not gwin.should_close():
         glClear(GL_COLOR_BUFFER_BIT)
-
         glDrawElements(GL_TRIANGLES, len(indices), GL_UNSIGNED_INT, indices)
 
         # Swap front and back buffers
-        glfw.swap_buffers(window)
+        glfw.swap_buffers(gwin)
 
         # Poll for and process events
         glfw.poll_events()
