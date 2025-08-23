@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import glfw
 import numpy as np
 from OpenGL.GL import (
     GL_COLOR_BUFFER_BIT,
@@ -28,8 +27,10 @@ class GDraw:
 
     def __init__(self, gwindow: GWin):
         glog.i("Initializing GDraw...")
-
         self.gwin = gwindow
+
+    def clear(self) -> None:
+        glClear(GL_COLOR_BUFFER_BIT)
 
     def triangle(self) -> None:
         # Triangle vertices
@@ -54,13 +55,4 @@ class GDraw:
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
-        # Loop until the user closes the window
-        while not self.gwin.should_close():
-            glClear(GL_COLOR_BUFFER_BIT)
-            glDrawElements(GL_TRIANGLES, len(indices), GL_UNSIGNED_INT, indices)
-
-            # Swap front and back buffers
-            glfw.swap_buffers(self.gwin)
-
-            # Poll for and process events
-            glfw.poll_events()
+        glDrawElements(GL_TRIANGLES, len(indices), GL_UNSIGNED_INT, indices)
