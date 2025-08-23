@@ -12,7 +12,7 @@ class GLogger:
         self,
         *values: object,
         sep: str = " ",
-        end: str = "\n",
+        end: str = "",
     ) -> None:
         self.econsole.log(
             *values,
@@ -27,7 +27,7 @@ class GLogger:
         self,
         *values: object,
         sep: str = " ",
-        end: str = "\n",
+        end: str = "",
     ) -> None:
         self.console.log(
             *values,
