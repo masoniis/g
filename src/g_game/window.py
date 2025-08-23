@@ -5,7 +5,9 @@ from typing import Any
 import glfw
 from OpenGL.GL import GL_TRUE
 
-from g_utils import glog
+from g_utils import GLogger
+
+glog = GLogger(name="gwin")
 
 
 class GWin:

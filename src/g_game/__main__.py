@@ -1,5 +1,7 @@
 from g_game.game import Game
-from g_utils import glog
+from g_utils import GLogger
+
+glog = GLogger(name="main")
 
 
 def main():

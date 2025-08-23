@@ -1,8 +1,14 @@
-from .glog import glog
-from .render import create_perspective_matrix, look_at, normalize
+from .glogger import GLogger
+from .render import (
+    compile_shader_program,
+    create_perspective_matrix,
+    look_at,
+    normalize,
+)
 
 __all__ = [
-    "glog",
+    "GLogger",
+    "compile_shader_program",
     "create_perspective_matrix",
     "look_at",
     "normalize",

@@ -1,6 +1,23 @@
 import math
 
 import numpy as np
+from OpenGL.GL import (
+    GL_COMPILE_STATUS,
+    GL_FRAGMENT_SHADER,
+    GL_LINK_STATUS,
+    GL_VERTEX_SHADER,
+    glAttachShader,
+    glCompileShader,
+    glCreateProgram,
+    glCreateShader,
+    glDeleteShader,
+    glGetProgramInfoLog,
+    glGetProgramiv,
+    glGetShaderInfoLog,
+    glGetShaderiv,
+    glLinkProgram,
+    glShaderSource,
+)
 
 
 def normalize(v: np.ndarray) -> np.ndarray:
@@ -63,3 +80,50 @@ def create_perspective_matrix(
     matrix[3, 2] = -(2.0 * far * near) / (far - near)
 
     return matrix
+
+
+def compile_shader_program(vertex_path: str, fragment_path: str) -> int:
+    # Read shader source code from files
+    with open(vertex_path, "r") as f:
+        vertex_source = f.read()
+    with open(fragment_path, "r") as f:
+        fragment_source = f.read()
+
+    # Compile Vertex Shader
+    vertex_shader = glCreateShader(GL_VERTEX_SHADER)
+    glShaderSource(vertex_shader, vertex_source)
+    glCompileShader(vertex_shader)
+    if not glGetShaderiv(vertex_shader, GL_COMPILE_STATUS):
+        raise Exception(
+            f"ERROR: Vertex shader compilation failed\n{glGetShaderInfoLog(vertex_shader)}"
+        )
+
+    # Compile Fragment Shader
+    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER)
+    glShaderSource(fragment_shader, fragment_source)
+    glCompileShader(fragment_shader)
+    if not glGetShaderiv(fragment_shader, GL_COMPILE_STATUS):
+        raise Exception(
+            f"ERROR: Fragment shader compilation failed\n{glGetShaderInfoLog(fragment_shader)}"
+        )
+
+    # Link shaders into a program
+    shader_program = glCreateProgram()
+    glAttachShader(shader_program, vertex_shader)
+    glAttachShader(shader_program, fragment_shader)
+    glLinkProgram(shader_program)
+    if not glGetProgramiv(shader_program, GL_LINK_STATUS):
+        raise Exception(
+            f"ERROR: Shader program linking failed\n{glGetProgramInfoLog(shader_program)}"
+        )
+
+    # Delete shaders as they are now linked into the program and no longer necessary
+    glDeleteShader(vertex_shader)
+    glDeleteShader(fragment_shader)
+
+    if not isinstance(shader_program, int):  # pyright: ignore[reportUnnecessaryIsInstance]
+        raise TypeError(
+            "The shader program compilation didn't return an integer assignment!"
+        )
+
+    return shader_program

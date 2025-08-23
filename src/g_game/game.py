@@ -5,28 +5,15 @@ import sys
 import glfw
 import numpy as np
 from OpenGL.GL import (
-    GL_COMPILE_STATUS,
-    GL_FRAGMENT_SHADER,
-    GL_LINK_STATUS,
-    GL_VERTEX_SHADER,
-    glAttachShader,
     glClearColor,
-    glCompileShader,
-    glCreateProgram,
-    glCreateShader,
-    glDeleteShader,
-    glGetProgramInfoLog,
-    glGetProgramiv,
-    glGetShaderInfoLog,
-    glGetShaderiv,
     glGetUniformLocation,
-    glLinkProgram,
-    glShaderSource,
 )
 
 from g_game.draw import GDraw, Mesh
 from g_game.window import GWin
-from g_utils import create_perspective_matrix, glog, look_at
+from g_utils import GLogger, compile_shader_program, create_perspective_matrix, look_at
+
+glog = GLogger(name="game")
 
 
 class Camera:
@@ -54,51 +41,6 @@ class Camera:
             self.position -= np.cross(self.front, self.world_up) * velocity
         if direction == "RIGHT":
             self.position += np.cross(self.front, self.world_up) * velocity
-
-
-def compile_shader_program(vertex_path: str, fragment_path: str) -> int:
-    # Read shader source code from files
-    with open(vertex_path, "r") as f:
-        vertex_source = f.read()
-    with open(fragment_path, "r") as f:
-        fragment_source = f.read()
-
-    # Compile Vertex Shader
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER)
-    glShaderSource(vertex_shader, vertex_source)
-    glCompileShader(vertex_shader)
-    if not glGetShaderiv(vertex_shader, GL_COMPILE_STATUS):
-        raise Exception(
-            f"ERROR: Vertex shader compilation failed\n{glGetShaderInfoLog(vertex_shader)}"
-        )
-
-    # Compile Fragment Shader
-    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER)
-    glShaderSource(fragment_shader, fragment_source)
-    glCompileShader(fragment_shader)
-    if not glGetShaderiv(fragment_shader, GL_COMPILE_STATUS):
-        raise Exception(
-            f"ERROR: Fragment shader compilation failed\n{glGetShaderInfoLog(fragment_shader)}"
-        )
-
-    # Link shaders into a program
-    shader_program = glCreateProgram()
-    glAttachShader(shader_program, vertex_shader)
-    glAttachShader(shader_program, fragment_shader)
-    glLinkProgram(shader_program)
-    if not glGetProgramiv(shader_program, GL_LINK_STATUS):
-        raise Exception(
-            f"ERROR: Shader program linking failed\n{glGetProgramInfoLog(shader_program)}"
-        )
-
-    # Delete shaders as they are now linked into the program and no longer necessary
-    glDeleteShader(vertex_shader)
-    glDeleteShader(fragment_shader)
-
-    if not isinstance(shader_program, int):  # pyright: ignore[reportUnnecessaryIsInstance]
-        raise TypeError("Shader program is not an integer!")
-
-    return shader_program
 
 
 class Game:
@@ -194,10 +136,11 @@ class Game:
 
                 glfw.swap_buffers(self.gwin.window)
                 glfw.poll_events()
+            glog.i("Window was closed.")
         except KeyboardInterrupt:
             print()
-            glog.i("KeyboardInterrupt received, exiting...")
+            glog.i("[b red]KeyboardInterrupt[/] received, exiting...")
             sys.stdout.flush()
         finally:
-            glog.i("Game loop has ended, cya!")
             glfw.terminate()
+            glog.i("[green]Successful cleanup![/]")

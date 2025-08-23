@@ -13,7 +13,6 @@ from OpenGL.GL import (
     glBindVertexArray,
     glBufferData,
     glClear,
-    glClearColor,
     glDrawArrays,
     glEnableVertexAttribArray,
     glGenBuffers,
@@ -23,7 +22,9 @@ from OpenGL.GL import (
     glVertexAttribPointer,
 )
 
-from g_utils import glog
+from g_utils import GLogger
+
+glog = GLogger(name="gdraw")
 
 
 @dataclass
