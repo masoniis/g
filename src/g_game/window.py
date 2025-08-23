@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 import glfw
+from OpenGL.GL import GL_TRUE
 
 from g_utils import glog
 
@@ -23,8 +24,14 @@ class GWin:
         if not glfw.init():
             raise RuntimeError("GLFW Initialization Failed")
 
+        # Give a hint to set the context version to 330 for shaders
+        glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
+        glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
+        glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
+        glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, GL_TRUE)
+
         self.window = glfw.create_window(
-            *self.size, title="Hello World", monitor=None, share=None
+            *self.size, title="g", monitor=None, share=None
         )
 
         if not self.window:
@@ -41,8 +48,9 @@ class GWin:
 
     def set_as_context(self) -> GWin:
         """Makes the context current and returns self for method chaining"""
-        glfw.make_context_current(window=self.window)
+        glfw.make_context_current(window=self)
         return self
 
     def should_close(self) -> bool:
-        return glfw.window_should_close(window=self.window)
+        """Returns whether the window should close"""
+        return glfw.window_should_close(window=self)
