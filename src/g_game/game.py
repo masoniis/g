@@ -10,6 +10,7 @@ from OpenGL.GL import (
     GL_LINK_STATUS,
     GL_VERTEX_SHADER,
     glAttachShader,
+    glClearColor,
     glCompileShader,
     glCreateProgram,
     glCreateShader,
@@ -86,6 +87,8 @@ class Game:
 
     def run(self) -> None:
         self.gwin.set_as_context()
+
+        glClearColor(0.1, 0.1, 0.3, 1.0)
 
         # 1. Compile shaders
         shader = compile_shader_program(

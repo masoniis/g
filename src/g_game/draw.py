@@ -18,9 +18,9 @@ from OpenGL.GL import (
     glEnableVertexAttribArray,
     glGenBuffers,
     glGenVertexArrays,
+    glUniformMatrix4fv,
     glUseProgram,
     glVertexAttribPointer,
-    glUniformMatrix4fv,
 )
 
 from g_utils import glog
@@ -37,7 +37,6 @@ class Mesh:
 class GDraw:
     def __init__(self) -> None:
         glog.i("Initializing GDraw...")
-        glClearColor(0.1, 0.1, 0.9, 1.0)
 
     def clear(self) -> None:
         """Clears the color buffer."""
@@ -81,7 +80,14 @@ class GDraw:
         # Return a Mesh object containing all the necessary handles
         return Mesh(vao=VAO, vbo=VBO, vertex_count=3, shader_program=shader_program)
 
-    def draw(self, mesh: Mesh, projection_loc: int, model_view_loc: int, projection: np.ndarray, model_view: np.ndarray) -> None:
+    def draw(
+        self,
+        mesh: Mesh,
+        projection_loc: int,
+        model_view_loc: int,
+        projection: np.ndarray,
+        model_view: np.ndarray,
+    ) -> None:
         """Draws a given mesh object."""
         glUseProgram(mesh.shader_program)
 
