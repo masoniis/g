@@ -5,9 +5,9 @@ import numpy as np
 from OpenGL.GL import (
     GL_COLOR_BUFFER_BIT,
     GL_FLOAT,
-    GL_LINES,
     GL_MODELVIEW,
     GL_PROJECTION,
+    GL_TRIANGLES,
     GL_UNSIGNED_INT,
     GL_VERTEX_ARRAY,
     glClear,
@@ -43,46 +43,25 @@ def main():
     # Make the window's context current
     glfw.make_context_current(window)
 
-    # Cube vertices
+    # Triangle vertices
     vertices = np.array(
         [
-            [1, -1, -1],
-            [1, 1, -1],
-            [-1, 1, -1],
-            [-1, -1, -1],
-            [1, -1, 1],
-            [1, 1, 1],
-            [-1, -1, 1],
-            [-1, 1, 1],
+            [0.0, 0.5, 0.0],  # Top vertex
+            [-0.5, -0.5, 0.0],  # Bottom left
+            [0.5, -0.5, 0.0],  # Bottom right
         ],
         dtype=np.float32,
     )
 
-    # Cube edges
-    edges = np.array(
-        [
-            [0, 1],
-            [1, 2],
-            [2, 3],
-            [3, 0],
-            [4, 5],
-            [5, 7],
-            [7, 6],
-            [6, 4],
-            [0, 4],
-            [1, 5],
-            [2, 7],
-            [3, 6],
-        ],
-        dtype=np.uint32,
-    )
+    # Triangle indices (just one triangle)
+    indices = np.array([0, 1, 2], dtype=np.uint32)
 
     glEnableClientState(GL_VERTEX_ARRAY)
     glVertexPointer(3, GL_FLOAT, 0, vertices)
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    glOrtho(-2, 2, -2, 2, -2, 2)
+    glOrtho(-1, 1, -1, 1, -1, 1)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
@@ -91,7 +70,7 @@ def main():
         # Render here, e.g. using pyopengl
         glClear(GL_COLOR_BUFFER_BIT)
 
-        glDrawElements(GL_LINES, len(edges) * 2, GL_UNSIGNED_INT, edges)
+        glDrawElements(GL_TRIANGLES, len(indices), GL_UNSIGNED_INT, indices)
 
         # Swap front and back buffers
         glfw.swap_buffers(window)
