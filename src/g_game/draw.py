@@ -43,35 +43,49 @@ class GDraw:
         """Clears the color buffer."""
         glClear(GL_COLOR_BUFFER_BIT)
 
-    def create_triangle_mesh(self, shader_program: int) -> Mesh:
+    def create_pyramid_mesh(self, shader_program: int) -> Mesh:
         """Creates the buffers and vertex layout for a simple triangle."""
+        # yapf: disable
         vertices = np.array(
             [
-                # top vert
-                0.0,  # x
-                0.5,  # y
-                0.0,  # z
-                # bottom left
-                -0.5,
-                -0.5,
-                0.0,
-                # bottom right
-                0.5,
-                -0.5,
-                0.0,
-            ],
+                # First face
+                0.0, 0.5, 0.0,   # peak
+                1.0, -0.5, 0.0, 
+                0.0, -0.5, 1.0,
+
+                # Second face
+                0.0, 0.5, 0.0,   # peak
+                1.0, -0.5, 0.0, 
+                0.0, -0.5, -1.0,
+
+                # Third face
+                0.0, 0.5, 0.0,   # peak
+                -1.0, -0.5, 0.0, 
+                0.0, -0.5, -1.0,
+
+                # Fourth face
+                0.0, 0.5, 0.0,   # peak
+                -1.0, -0.5, 0.0, 
+                0.0, -0.5, 1.0,
+        ],
             dtype=np.float32,
         )
+        # yapf: enable
 
-        VAO = glGenVertexArrays(1)
-        VBO = glGenBuffers(1)
+        VAO: int = glGenVertexArrays(1)
+        VBO: int = glGenBuffers(1)
 
         glBindVertexArray(VAO)
         glBindBuffer(GL_ARRAY_BUFFER, VBO)
         glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
 
         glVertexAttribPointer(
-            0, 3, GL_FLOAT, GL_FALSE, 3 * vertices.itemsize, ctypes.c_void_p(0)
+            0,  # loc 0 in the shader
+            3,  # 3 components per vertex
+            GL_FLOAT,
+            GL_FALSE,  # no normalizing
+            3 * vertices.itemsize,
+            ctypes.c_void_p(0),
         )
         glEnableVertexAttribArray(0)
 
@@ -79,7 +93,12 @@ class GDraw:
         glBindVertexArray(0)
 
         # Return a Mesh object containing all the necessary handles
-        return Mesh(vao=VAO, vbo=VBO, vertex_count=3, shader_program=shader_program)
+        return Mesh(
+            vao=VAO,
+            vbo=VBO,
+            vertex_count=int(len(vertices) / 3),
+            shader_program=shader_program,
+        )
 
     def draw(
         self,

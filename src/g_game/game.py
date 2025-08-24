@@ -25,6 +25,9 @@ class Game:
     camera: Camera
     camera_keys: dict[int, bool]
     last_frame_time: float
+    last_x: float
+    last_y: float
+    first_mouse: bool
 
     def __init__(self) -> None:
         glog.i("Initializing Game...")
@@ -57,7 +60,9 @@ class Game:
             self.first_mouse = False
 
         xoffset = xpos - self.last_x
-        yoffset = self.last_y - ypos  # Reversed since y-coordinates go from bottom to top
+        yoffset = (
+            self.last_y - ypos
+        )  # Reversed since y-coordinates go from bottom to top
 
         self.last_x = xpos
         self.last_y = ypos
@@ -88,7 +93,7 @@ class Game:
         )
 
         # 2. Ask GDraw to create the triangle mesh for us
-        self.triangle = self.gdraw.create_triangle_mesh(shader)
+        self.triangle = self.gdraw.create_pyramid_mesh(shader)
 
         # 3. Get uniform locations
         projection_loc = glGetUniformLocation(shader, "projection")

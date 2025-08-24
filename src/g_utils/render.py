@@ -29,7 +29,7 @@ def normalize(v: np.ndarray) -> np.ndarray:
 
 
 def look_at(eye: np.ndarray, target: np.ndarray, up: np.ndarray) -> np.ndarray:
-    """Creates a view matrix for a camera."""
+    """Creates a world to view matrix for a camera."""
     zaxis = normalize(target - eye)
     xaxis = normalize(np.cross(zaxis, up))
     yaxis = np.cross(xaxis, zaxis)
