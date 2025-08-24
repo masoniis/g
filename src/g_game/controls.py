@@ -30,3 +30,28 @@ class Camera:
             self.position -= np.cross(self.front, self.world_up) * velocity
         if direction == "RIGHT":
             self.position += np.cross(self.front, self.world_up) * velocity
+
+    def process_mouse_movement(self, xoffset: float, yoffset: float) -> None:
+        sensitivity = 0.1
+        xoffset *= sensitivity
+        yoffset *= sensitivity
+
+        yaw = np.arctan2(self.front[2], self.front[0]) * (180.0 / np.pi)
+        pitch = np.arcsin(self.front[1]) * (180.0 / np.pi)
+
+        yaw += xoffset
+        pitch += yoffset
+
+        if pitch > 89.0:
+            pitch = 89.0
+        if pitch < -89.0:
+            pitch = -89.0
+
+        front = np.array(
+            [
+                np.cos(np.radians(yaw)) * np.cos(np.radians(pitch)),
+                np.sin(np.radians(pitch)),
+                np.sin(np.radians(yaw)) * np.cos(np.radians(pitch)),
+            ]
+        )
+        self.front = front / np.linalg.norm(front)

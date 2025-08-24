@@ -38,6 +38,9 @@ class Game:
         )
         self.camera_keys = {}
         self.last_frame_time = 0.0
+        self.last_x = 400
+        self.last_y = 300
+        self.first_mouse = True
 
     def key_callback(
         self, _window: Any, key: Any, _scancode: Any, action: int, _mods: Any
@@ -46,6 +49,20 @@ class Game:
             self.camera_keys[key] = True
         elif action == glfw.RELEASE:
             self.camera_keys[key] = False
+
+    def mouse_callback(self, _window: Any, xpos: float, ypos: float) -> None:
+        if self.first_mouse:
+            self.last_x = xpos
+            self.last_y = ypos
+            self.first_mouse = False
+
+        xoffset = xpos - self.last_x
+        yoffset = self.last_y - ypos  # Reversed since y-coordinates go from bottom to top
+
+        self.last_x = xpos
+        self.last_y = ypos
+
+        self.camera.process_mouse_movement(xoffset, yoffset)
 
     def process_input(self, delta_time: float) -> None:
         if self.camera_keys.get(glfw.KEY_W):
@@ -60,6 +77,8 @@ class Game:
     def run(self) -> None:
         self.gwin.set_as_context()
         glfw.set_key_callback(self.gwin.window, self.key_callback)
+        glfw.set_cursor_pos_callback(self.gwin.window, self.mouse_callback)
+        glfw.set_input_mode(self.gwin.window, glfw.CURSOR, glfw.CURSOR_DISABLED)
 
         glClearColor(0.1, 0.1, 0.3, 1.0)
 

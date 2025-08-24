@@ -35,14 +35,15 @@ def look_at(eye: np.ndarray, target: np.ndarray, up: np.ndarray) -> np.ndarray:
     yaxis = np.cross(xaxis, zaxis)
 
     # Create a 4x4 view matrix
-    # yapf: disable
-    view_matrix = np.array([
-        [xaxis[0], yaxis[0], -zaxis[0], 0],
-        [xaxis[1], yaxis[1], -zaxis[1], 0],
-        [xaxis[2], yaxis[2], -zaxis[2], 0],
-        [-np.dot(xaxis, eye), -np.dot(yaxis, eye), np.dot(zaxis, eye), 1]
-    ], dtype=np.float32)
-    # yapf: enable
+    view_matrix = np.array(
+        [
+            [xaxis[0], yaxis[0], -zaxis[0], 0],
+            [xaxis[1], yaxis[1], -zaxis[1], 0],
+            [xaxis[2], yaxis[2], -zaxis[2], 0],
+            [-np.dot(xaxis, eye), -np.dot(yaxis, eye), np.dot(zaxis, eye), 1],
+        ],
+        dtype=np.float32,
+    )
 
     return view_matrix
 
@@ -53,11 +54,12 @@ def create_perspective_matrix(
     """
     Creates a perspective projection matrix using NumPy.
 
-    :param fov_degrees: Field of View in degrees.
-    :param aspect_ratio: The aspect ratio of the viewport (width / height).
-    :param near: The near clipping plane distance.
-    :param far: The far clipping plane distance.
-    :return: A 4x4 NumPy array representing the perspective matrix.
+    fov_degrees: Field of View in degrees.
+    aspect_ratio: The aspect ratio of the viewport (width / height).
+    near: The near clipping plane distance.
+    far: The far clipping plane distance.
+
+    Returns a 4x4 NumPy array representing the perspective matrix.
     """
     # 1. Convert field of view from degrees to radians
     fov_rad = math.radians(fov_degrees)
