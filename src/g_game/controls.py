@@ -1,3 +1,4 @@
+import glfw
 import numpy as np
 
 from g_utils import GLogger, look_at
@@ -20,16 +21,22 @@ class Camera:
     def get_view_matrix(self) -> np.ndarray:
         return look_at(self.position, self.position + self.front, self.world_up)
 
-    def process_keyboard(self, direction: str, delta_time: float) -> None:
+    def process_keyboard(self, key: int, delta_time: float) -> None:
+        """
+        key is int key code from glfw
+        """
         velocity = self.speed * delta_time
-        if direction == "FORWARD":
-            self.position += self.front * velocity
-        if direction == "BACKWARD":
-            self.position -= self.front * velocity
-        if direction == "LEFT":
-            self.position -= np.cross(self.front, self.world_up) * velocity
-        if direction == "RIGHT":
-            self.position += np.cross(self.front, self.world_up) * velocity
+        match key:
+            case glfw.KEY_W:
+                self.position += self.front * velocity
+            case glfw.KEY_A:
+                self.position -= np.cross(self.front, self.world_up) * velocity
+            case glfw.KEY_S:
+                self.position -= self.front * velocity
+            case glfw.KEY_D:
+                self.position += np.cross(self.front, self.world_up) * velocity
+            case _:
+                pass
 
     def process_mouse_movement(self, xoffset: float, yoffset: float) -> None:
         sensitivity = 0.1

@@ -70,14 +70,9 @@ class Game:
         self.camera.process_mouse_movement(xoffset, yoffset)
 
     def process_input(self, delta_time: float) -> None:
-        if self.camera_keys.get(glfw.KEY_W):
-            self.camera.process_keyboard("FORWARD", delta_time)
-        if self.camera_keys.get(glfw.KEY_A):
-            self.camera.process_keyboard("LEFT", delta_time)
-        if self.camera_keys.get(glfw.KEY_S):
-            self.camera.process_keyboard("BACKWARD", delta_time)
-        if self.camera_keys.get(glfw.KEY_D):
-            self.camera.process_keyboard("RIGHT", delta_time)
+        for key, isPressed in self.camera_keys.items():
+            if isPressed:
+                self.camera.process_keyboard(key, delta_time)
 
     def run(self) -> None:
         self.gwin.set_as_context()
