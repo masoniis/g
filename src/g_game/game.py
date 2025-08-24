@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from typing import Any
 
 import glfw
 import numpy as np
@@ -9,38 +10,12 @@ from OpenGL.GL import (
     glGetUniformLocation,
 )
 
+from g_game.controls import Camera
 from g_game.draw import GDraw, Mesh
 from g_game.window import GWin
-from g_utils import GLogger, compile_shader_program, create_perspective_matrix, look_at
+from g_utils import GLogger, compile_shader_program, create_perspective_matrix
 
 glog = GLogger(name="game")
-
-
-class Camera:
-    position: np.ndarray
-    world_up: np.ndarray
-    front: np.ndarray
-    speed: float
-
-    def __init__(self, position: np.ndarray, up: np.ndarray, speed: float) -> None:
-        self.position = position
-        self.world_up = up
-        self.front = np.array([0.0, 0.0, 1.0])
-        self.speed = speed
-
-    def get_view_matrix(self) -> np.ndarray:
-        return look_at(self.position, self.position + self.front, self.world_up)
-
-    def process_keyboard(self, direction: str, delta_time: float) -> None:
-        velocity = self.speed * delta_time
-        if direction == "FORWARD":
-            self.position += self.front * velocity
-        if direction == "BACKWARD":
-            self.position -= self.front * velocity
-        if direction == "LEFT":
-            self.position -= np.cross(self.front, self.world_up) * velocity
-        if direction == "RIGHT":
-            self.position += np.cross(self.front, self.world_up) * velocity
 
 
 class Game:
@@ -64,7 +39,9 @@ class Game:
         self.camera_keys = {}
         self.last_frame_time = 0.0
 
-    def key_callback(self, window, key, scancode, action, mods) -> None:
+    def key_callback(
+        self, _window: Any, key: Any, _scancode: Any, action: int, _mods: Any
+    ) -> None:
         if action == glfw.PRESS:
             self.camera_keys[key] = True
         elif action == glfw.RELEASE:
