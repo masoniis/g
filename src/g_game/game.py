@@ -5,7 +5,9 @@ import sys
 import glfw
 import numpy as np
 from OpenGL.GL import (
+    GL_CULL_FACE,
     glClearColor,
+    glEnable,
     glGetUniformLocation,
 )
 
@@ -14,7 +16,12 @@ from g_game.draw import GDraw
 from g_game.terrain.chunk import Chunk
 from g_game.terrain.world import World
 from g_game.window import GWin
-from g_utils import GLogger, compile_shader_program, create_perspective_matrix
+from g_utils import (
+    GLogger,
+    compile_shader_program,
+    create_perspective_matrix,
+    load_texture,
+)
 
 glog = GLogger(name="game")
 
@@ -44,6 +51,7 @@ class Game:
         self.gwin.set_as_context()
 
         glClearColor(0.1, 0.1, 0.3, 1.0)
+        glEnable(GL_CULL_FACE)
 
         # 1. Compile shaders
         shader = compile_shader_program(
@@ -61,11 +69,15 @@ class Game:
         chunk_vertices, chunk_indices = chunk.generate_mesh()
         chunk_mesh = self.gdraw.create_mesh(chunk_vertices, chunk_indices, shader)
 
-        # 4. Get uniform locations
+        # 4. Load texture
+        texture = load_texture("src/g_game/graphics/textures/grass_16x16.png")
+
+        # 5. Get uniform locations
         projection_loc = glGetUniformLocation(shader, "projection")
         model_view_loc = glGetUniformLocation(shader, "modelView")
+        texture_loc = glGetUniformLocation(shader, "u_texture")
 
-        # 5. Create matrices
+        # 6. Create matrices
         fov = 45.0
         aspect = 800 / 600
         near_plane = 0.1
@@ -96,6 +108,8 @@ class Game:
                     chunk_mesh,
                     projection_loc,
                     model_view_loc,
+                    texture_loc,
+                    texture,
                     projection,
                     model_view,
                 )

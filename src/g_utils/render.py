@@ -2,22 +2,36 @@ import math
 
 import numpy as np
 from OpenGL.GL import (
+    GL_CLAMP_TO_EDGE,
     GL_COMPILE_STATUS,
     GL_FRAGMENT_SHADER,
+    GL_LINEAR,
     GL_LINK_STATUS,
+    GL_RGB,
+    GL_TEXTURE_2D,
+    GL_TEXTURE_MAG_FILTER,
+    GL_TEXTURE_MIN_FILTER,
+    GL_TEXTURE_WRAP_S,
+    GL_TEXTURE_WRAP_T,
+    GL_UNSIGNED_BYTE,
     GL_VERTEX_SHADER,
     glAttachShader,
+    glBindTexture,
     glCompileShader,
     glCreateProgram,
     glCreateShader,
     glDeleteShader,
+    glGenTextures,
     glGetProgramInfoLog,
     glGetProgramiv,
     glGetShaderInfoLog,
     glGetShaderiv,
     glLinkProgram,
     glShaderSource,
+    glTexImage2D,
+    glTexParameteri,
 )
+from PIL import Image
 
 
 def normalize(v: np.ndarray) -> np.ndarray:
@@ -129,3 +143,38 @@ def compile_shader_program(vertex_path: str, fragment_path: str) -> int:
         )
 
     return shader_program
+
+
+def load_texture(path: str) -> int:
+    """Loads a texture from a file and returns the texture ID."""
+    texture_id = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, texture_id)
+
+    # Set texture wrapping and filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+
+    try:
+        with Image.open(path) as img:
+            # Flip image to match what opengl expects (0,0 is bottom left, not top left)
+            img = img.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
+
+            img_data = img.convert("RGB").tobytes()
+            width, height = img.size
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RGB,
+                width,
+                height,
+                0,
+                GL_RGB,
+                GL_UNSIGNED_BYTE,
+                img_data,
+            )
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Texture file not found at: {path}")
+
+    return texture_id

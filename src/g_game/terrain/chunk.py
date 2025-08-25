@@ -57,34 +57,35 @@ class Chunk:
             tuple[np.array, np.array]: A tuple containing the vertex data and the index data.
         """
         # Predefined vertices for a single cube at the origin
-        # (x, y, z) coordinates for each vertex
+        # (x, y, z, u, v) coordinates for each vertex
         # fmt: off
         vertices = np.array([
             # Front face
-            -0.5, -0.5,  0.5,
-             0.5, -0.5,  0.5,
-             0.5,  0.5,  0.5,
-            -0.5,  0.5,  0.5,
+            -0.5, -0.5,  0.5, 0.0, 0.0, # bottom left (looking from +z)
+             0.5, -0.5,  0.5, 1.0, 0.0, # bottom right
+             0.5,  0.5,  0.5, 1.0, 1.0, # top right
+            -0.5,  0.5,  0.5, 0.0, 1.0, # top left
             # Back face
-            -0.5, -0.5, -0.5,
-             0.5, -0.5, -0.5,
-             0.5,  0.5, -0.5,
-            -0.5,  0.5, -0.5,
+             0.5, -0.5, -0.5, 0.0, 0.0, # bottom left (looking from -z)
+            -0.5, -0.5, -0.5, 1.0, 0.0, # bottom right
+            -0.5,  0.5, -0.5, 1.0, 1.0, # top right
+             0.5,  0.5, -0.5, 0.0, 1.0, # top left
         ], dtype="f4")
 
+        # Indice order for block must be Counter-Clockwise b/c opengl culling.
         indices = np.array([
-            # Front face
+            # Front face (viewed from +Z)
             0, 1, 2, 2, 3, 0,
-            # Back face
+            # Back face (viewed from -Z)
             4, 5, 6, 6, 7, 4,
-            # Top face
-            3, 2, 6, 6, 7, 3,
-            # Bottom face
-            0, 1, 5, 5, 4, 0,
-            # Right face
-            1, 5, 6, 6, 2, 1,
-            # Left face
-            4, 0, 3, 3, 7, 4,
+            # Top face (viewed from +Y)
+            3, 2, 7, 7, 6, 3,
+            # Bottom face (viewed from -Y)
+            5, 4, 1, 1, 0, 5,
+            # Right face (viewed from +X)
+            1, 4, 7, 7, 2, 1,
+            # Left face (viewed from -X)
+            5, 0, 3, 3, 6, 5,
         ], dtype="uint32")
         # fmt: on
         return vertices, indices
