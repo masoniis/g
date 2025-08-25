@@ -9,6 +9,7 @@ class World:
         Manages the collection of chunks in the world.
         """
         self.chunks = {}
+        self.generate_world()
 
     def add_chunk(self, chunk_position: tuple[int, int, int], chunk: Chunk):
         """
@@ -18,7 +19,7 @@ class World:
             chunk_position (tuple): The (x, y, z) position of the chunk in the world.
             chunk (Chunk): The chunk object.
         """
-        pass
+        self.chunks[chunk_position] = chunk
 
     def get_chunk(self, chunk_position: tuple[int, int, int]):
         """
@@ -38,4 +39,4 @@ class World:
 
         (This is a stub for procedural generation or loading from a file).
         """
-        pass
+        self.add_chunk((0, 0, 0), Chunk())
