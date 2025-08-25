@@ -3,7 +3,7 @@ import numpy as np
 
 from g_utils import GLogger, look_at
 
-glog = GLogger(name="game")
+glog = GLogger(name="camera")
 
 
 class Camera:
@@ -36,6 +36,7 @@ class Camera:
             case glfw.KEY_D:
                 self.position += np.cross(self.front, self.world_up) * velocity
             case _:
+                glog.i("Unrecognized keycode in process_keyboard:", key)
                 pass
 
     def process_mouse_movement(self, xoffset: float, yoffset: float) -> None:
