@@ -12,7 +12,6 @@ from OpenGL.GL import (
 from g_game.controls import Camera
 from g_game.draw import GDraw
 from g_game.terrain.chunk import Chunk
-from g_game.terrain.meshing import generate_mesh
 from g_game.terrain.world import World
 from g_game.window import GWin
 from g_utils import GLogger, compile_shader_program, create_perspective_matrix
@@ -59,7 +58,7 @@ class Game:
         world.add_chunk((0, 0, 0), chunk)
 
         # 3. Generate a mesh for the chunk and create the renderable mesh object
-        chunk_vertices, chunk_indices = generate_mesh(chunk)
+        chunk_vertices, chunk_indices = chunk.generate_mesh()
         chunk_mesh = self.gdraw.create_mesh(chunk_vertices, chunk_indices, shader)
 
         # 4. Get uniform locations

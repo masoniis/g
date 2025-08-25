@@ -15,7 +15,6 @@ from OpenGL.GL import (
     glBindVertexArray,
     glBufferData,
     glClear,
-    glDrawArrays,
     glDrawElements,
     glEnableVertexAttribArray,
     glGenBuffers,
@@ -104,7 +103,7 @@ class GDraw:
         glUniformMatrix4fv(model_view_loc, 1, GL_FALSE, model_view)
 
         glBindVertexArray(mesh.vao)
-        if False:
-            glDrawArrays(GL_TRIANGLES, 0, mesh.vertex_count)
-        glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, ctypes.c_void_p(0))
+        glDrawElements(
+            GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, ctypes.c_void_p(0)
+        )
         glBindVertexArray(0)  # Unbind after drawing

@@ -1,4 +1,7 @@
-from .meshing import generate_mesh
+from .chunk import Chunk
+from .world import World
 
-__all__ = ["generate_mesh"]
-
+__all__ = [
+    "Chunk",
+    "World",
+]
