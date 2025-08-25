@@ -5,15 +5,18 @@ import numpy as np
 from OpenGL.GL import (
     GL_ARRAY_BUFFER,
     GL_COLOR_BUFFER_BIT,
+    GL_ELEMENT_ARRAY_BUFFER,
     GL_FALSE,
     GL_FLOAT,
     GL_STATIC_DRAW,
     GL_TRIANGLES,
+    GL_UNSIGNED_INT,
     glBindBuffer,
     glBindVertexArray,
     glBufferData,
     glClear,
     glDrawArrays,
+    glDrawElements,
     glEnableVertexAttribArray,
     glGenBuffers,
     glGenVertexArrays,
@@ -31,6 +34,7 @@ glog = GLogger(name="gdraw")
 class Mesh:
     vao: int
     vbo: int
+    ebo: int
     vertex_count: int
     shader_program: int
 
@@ -43,41 +47,25 @@ class GDraw:
         """Clears the color buffer."""
         glClear(GL_COLOR_BUFFER_BIT)
 
-    def create_pyramid_mesh(self, shader_program: int) -> Mesh:
-        """Creates the buffers and vertex layout for a simple triangle."""
-        # yapf: disable
-        vertices = np.array(
-            [
-                # First face
-                0.0, 0.5, 0.0,   # peak
-                1.0, -0.5, 0.0, 
-                0.0, -0.5, 1.0,
-
-                # Second face
-                0.0, 0.5, 0.0,   # peak
-                1.0, -0.5, 0.0, 
-                0.0, -0.5, -1.0,
-
-                # Third face
-                0.0, 0.5, 0.0,   # peak
-                -1.0, -0.5, 0.0, 
-                0.0, -0.5, -1.0,
-
-                # Fourth face
-                0.0, 0.5, 0.0,   # peak
-                -1.0, -0.5, 0.0, 
-                0.0, -0.5, 1.0,
-        ],
-            dtype=np.float32,
-        )
-        # yapf: enable
+    def create_mesh(
+        self,
+        vertices: np.ndarray,
+        indices: np.ndarray,
+        shader_program: int,
+    ) -> Mesh:
+        """Creates the buffers and vertex layout for a given set of vertices."""
 
         VAO: int = glGenVertexArrays(1)
         VBO: int = glGenBuffers(1)
+        EBO: int = glGenBuffers(1)
 
         glBindVertexArray(VAO)
         glBindBuffer(GL_ARRAY_BUFFER, VBO)
         glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
+
+        # Configure the EBO (Element Buffer Object)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO)
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.nbytes, indices, GL_STATIC_DRAW)
 
         glVertexAttribPointer(
             0,  # loc 0 in the shader
@@ -96,7 +84,8 @@ class GDraw:
         return Mesh(
             vao=VAO,
             vbo=VBO,
-            vertex_count=int(len(vertices) / 3),
+            ebo=EBO,
+            vertex_count=len(indices),
             shader_program=shader_program,
         )
 
@@ -115,5 +104,7 @@ class GDraw:
         glUniformMatrix4fv(model_view_loc, 1, GL_FALSE, model_view)
 
         glBindVertexArray(mesh.vao)
-        glDrawArrays(GL_TRIANGLES, 0, mesh.vertex_count)
+        if False:
+            glDrawArrays(GL_TRIANGLES, 0, mesh.vertex_count)
+        glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, ctypes.c_void_p(0))
         glBindVertexArray(0)  # Unbind after drawing

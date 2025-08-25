@@ -7,6 +7,5 @@ uniform mat4 projection;
 uniform mat4 modelView;
 
 void main() {
-  // Output the final transformed vertex position
   gl_Position = projection * modelView * vec4(aPos, 1.0);
 }

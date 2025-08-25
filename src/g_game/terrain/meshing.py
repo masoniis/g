@@ -16,12 +16,12 @@ def generate_mesh(chunk: Chunk):
         chunk (Chunk): The chunk to generate a mesh for.
 
     Returns:
-        np.array: A numpy array of vertex data.
+        tuple[np.array, np.array]: A tuple containing the vertex data and the index data.
     """
     # Predefined vertices for a single cube at the origin
     # (x, y, z) coordinates for each vertex
     # fmt: off
-    vertices = [
+    vertices = np.array([
         # Front face
         -0.5, -0.5,  0.5,
          0.5, -0.5,  0.5,
@@ -29,33 +29,28 @@ def generate_mesh(chunk: Chunk):
         -0.5,  0.5,  0.5,
         # Back face
         -0.5, -0.5, -0.5,
-        -0.5,  0.5, -0.5,
-         0.5,  0.5, -0.5,
          0.5, -0.5, -0.5,
+         0.5,  0.5, -0.5,
+        -0.5,  0.5, -0.5,
+    ], dtype="f4")
+
+    indices = np.array([
+        # Front face
+        0, 1, 2, 2, 3, 0,
+        # Back face
+        4, 5, 6, 6, 7, 4,
         # Top face
-        -0.5,  0.5, -0.5,
-        -0.5,  0.5,  0.5,
-         0.5,  0.5,  0.5,
-         0.5,  0.5, -0.5,
+        3, 2, 6, 6, 7, 3,
         # Bottom face
-        -0.5, -0.5, -0.5,
-         0.5, -0.5, -0.5,
-         0.5, -0.5,  0.5,
-        -0.5, -0.5,  0.5,
+        0, 1, 5, 5, 4, 0,
         # Right face
-         0.5, -0.5, -0.5,
-         0.5,  0.5, -0.5,
-         0.5,  0.5,  0.5,
-         0.5, -0.5,  0.5,
+        1, 5, 6, 6, 2, 1,
         # Left face
-        -0.5, -0.5, -0.5,
-        -0.5, -0.5,  0.5,
-        -0.5,  0.5,  0.5,
-        -0.5,  0.5, -0.5,
-    ]
+        4, 0, 3, 3, 7, 4,
+    ], dtype="uint32")
     # fmt: on
     if chunk:
-        return np.array(vertices, dtype="f4")
+        return vertices, indices
 
 
 def greedy_mesh(chunk: Chunk):

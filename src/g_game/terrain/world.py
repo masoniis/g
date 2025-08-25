@@ -2,7 +2,7 @@ from g_game.terrain.chunk import Chunk
 
 
 class World:
-    chunks: dict
+    chunks: dict[tuple[int, int, int], Chunk]
 
     def __init__(self):
         """
@@ -21,7 +21,7 @@ class World:
         """
         self.chunks[chunk_position] = chunk
 
-    def get_chunk(self, chunk_position: tuple[int, int, int]):
+    def get_chunk(self, chunk_position: tuple[int, int, int]) -> Chunk:
         """
         Gets a chunk from the world.
 
@@ -31,7 +31,10 @@ class World:
         Returns:
             Chunk: The chunk object, or None if it doesn't exist.
         """
-        pass
+        if chunk_position in self.chunks:
+            return self.chunks[chunk_position]
+        else:
+            raise KeyError(f"Chunk at position {chunk_position} not found.")
 
     def generate_world(self):
         """

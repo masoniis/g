@@ -11,6 +11,9 @@ from OpenGL.GL import (
 
 from g_game.controls import Camera
 from g_game.draw import GDraw
+from g_game.terrain.chunk import Chunk
+from g_game.terrain.meshing import generate_mesh
+from g_game.terrain.world import World
 from g_game.window import GWin
 from g_utils import GLogger, compile_shader_program, create_perspective_matrix
 
@@ -48,15 +51,22 @@ class Game:
             "src/shaders/simple.vert", "src/shaders/simple.frag"
         )
 
-        # 2. Ask GDraw to create the triangle mesh for us
-        triangle = self.gdraw.create_pyramid_mesh(shader)
+        # 2. Create the world and a single chunk
+        world = World()
+        chunk = Chunk()
+        # You can populate the chunk with blocks here later
+        # For now, it's empty, but our mesher returns a test cube regardless
+        world.add_chunk((0, 0, 0), chunk)
 
-        # 3. Get uniform locations
+        # 3. Generate a mesh for the chunk and create the renderable mesh object
+        chunk_vertices, chunk_indices = generate_mesh(chunk)
+        chunk_mesh = self.gdraw.create_mesh(chunk_vertices, chunk_indices, shader)
+
+        # 4. Get uniform locations
         projection_loc = glGetUniformLocation(shader, "projection")
         model_view_loc = glGetUniformLocation(shader, "modelView")
 
-        # 4. Create matrices
-        # projection = np.identity(4, dtype=np.float32)
+        # 5. Create matrices
         fov = 45.0
         aspect = 800 / 600
         near_plane = 0.1
@@ -84,7 +94,7 @@ class Game:
                 model_view = view @ model
 
                 self.gdraw.draw(
-                    triangle,
+                    chunk_mesh,
                     projection_loc,
                     model_view_loc,
                     projection,
